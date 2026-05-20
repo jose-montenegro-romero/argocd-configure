@@ -29,6 +29,10 @@ helm list -n argocd
 # Exponer Argo CD en localhost
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
+# Entrar con el usuario:
+
+admin/ARGOCDPASS
+
 
 ----------------------------------------------------------------------------------------
 
