@@ -9,4 +9,4 @@ stringData:
   name: argocd-demo
   type: git
   url: https://github.com/helm/examples.git
-  # password: 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
+  # password: ghp_test
