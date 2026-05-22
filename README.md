@@ -42,4 +42,32 @@ kubectl apply -f argocd-manifests/repository.yaml
 kubectl apply -f argocd-manifests/project.yaml
 kubectl apply -f argocd-manifests/application.yaml
 
-kubectl port-forward svc/argocd-demo-hello-world -n argocd-demo 8081:80
+kubectl apply -f argocd-manifests/applicationSet.yaml
+
+----------------------------------------------------------------------------------------
+
+# Instalar argocd CLI
+
+argocd login https://localhost:8080 --username admin --password ARGOCDPASS --insecure
+
+# Espera hasta que la aplicación esté sincronizada y saludable
+argocd app wait dev-httpd-demo --timeout 300
+
+argocd app get dev-httpd-demo -o json | jq -r '.status.health.status'
+
+----------------------------------------------------------------------------------------
+# Addons y charts para AWS EKS
+
+AWS VPC CNI
+
+aws-load-balancer-controller
+
+ACK aws-gateway-api-controller
+
+karpenter
+
+ExternalDNS
+
+KEDA
+
+

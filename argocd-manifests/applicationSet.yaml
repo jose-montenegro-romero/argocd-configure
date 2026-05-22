@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-dev
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: 'https://github.com/jose-montenegro-romero/argocd-application-deploy.git'
+        revision: HEAD
+        directories:
+          - path: apps/dev/*
+  template:
+    metadata:
+      name: 'dev-{{path.basename}}'
+    spec:
+      project: default
+      sources:
+        # Origen A: El Chart de Helm base
+        - repoURL: 'https://github.com/jose-montenegro-romero/helm-aws.git'
+          targetRevision: HEAD
+          path: transversal
+          # Esto le dice a ArgoCD de dónde sacar los valores específicos de cada app:
+          helm:
+            valueFiles:
+              - '$config/apps/dev/{{path.basename}}/values.yaml'
+        # Origen B: El repositorio de configuraciones
+        - repoURL: 'https://github.com/jose-montenegro-romero/argocd-application-deploy.git'
+          targetRevision: HEAD
+          ref: config
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

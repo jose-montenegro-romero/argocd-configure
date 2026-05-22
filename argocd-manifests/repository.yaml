@@ -8,5 +8,5 @@ metadata:
 stringData:
   name: argocd-demo
   type: git
-  url: https://github.com/helm/examples.git
+  url: https://github.com/jose-montenegro-romero/helm-aws.git
   # password: ghp_test
