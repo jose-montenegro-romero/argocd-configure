@@ -5,11 +5,17 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - git:
-        repoURL: 'https://github.com/jose-montenegro-romero/argocd-application-deploy.git'
-        revision: HEAD
-        directories:
-          - path: apps/dev/*
+      - git:
+          repoURL: 'https://github.com/jose-montenegro-romero/argocd-application-deploy.git'
+          revision: HEAD
+          files:
+            - path: 'apps-aws/*/config.yaml'
+        selector:
+          matchExpressions:
+            - key: "deploy_config.dev"
+              operator: In
+              values:
+                - "true"
   template:
     metadata:
       name: 'dev-{{path.basename}}'
@@ -23,17 +29,17 @@ spec:
           # Esto le dice a ArgoCD de dónde sacar los valores específicos de cada app:
           helm:
             valueFiles:
-              - '$config/apps/dev/{{path.basename}}/values.yaml'
+              - '$config/apps-aws/{{path.basename}}/values.yaml'
         # Origen B: El repositorio de configuraciones
         - repoURL: 'https://github.com/jose-montenegro-romero/argocd-application-deploy.git'
           targetRevision: HEAD
           ref: config
       destination:
         server: 'https://kubernetes.default.svc'
-        namespace: '{{path.basename}}'
+        namespace: '{{deploy_config.namespace}}'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
-          - CreateNamespace=true
+          - CreateNamespace=false
